@@ -14,7 +14,7 @@ One forecast is produced every day at 12:00 (Europe/Paris local time)
 on day D, for day D+1.
 
 Information available at that time:
-- Consumption:  measure consumption up to apporximately 11:00 on day D plus the full history.
+- Consumption:  measured consumption up to approximately 11:00 on day D plus the full history.
 - Weather: Weather forecast for day D+1.
 - Calendar: weekday, public holidays and time of year of day D+1.
 
@@ -48,7 +48,7 @@ Evaluated on the test period (2025-09-01 to 2026-08-31), never used for training
 - Minimum: MAPE lower than the seasonal naive baseline.
 - Reported: the gap between the model's MAPE and that of the RTE
   day-ahead forecast.
-The daily forecast runs without manual action, and a
+- Engineering : The daily forecast runs without manual action, and a
 third party can reproduce the results from this repository.
 
 ## Out of scope
