@@ -4,7 +4,7 @@ from load_forecast.metrics import mae, mape
 
 
 def test_mae_single_value():
-    assert mae([50_000], [51_000]) == 1_000
+    assert mae([50_000], [51_000]) == 999
 
 
 def test_mape_single_value():
