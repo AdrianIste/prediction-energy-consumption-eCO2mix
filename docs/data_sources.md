@@ -13,6 +13,10 @@
 | Forecast columns                | `prevision_j1`             | `prevision_j1`             |
 | Values of the "nature" column   | `Données temps réel`       | `Données définitives`/`Données consolidées`|
 
-
 Checked on: 2026-10-06
 Notes : Since the actualisaton of the consolidated and final dataset is done at the middle of the next month of the prevision, and the actualisaton of the Real-time dataset is done hourly, there is a difference of 1 month and a half between the two datasets.
+
+## Weather
+
+- Source: [Open-Meteo](https://open-meteo.com/)
+- License: CC BY 4.0

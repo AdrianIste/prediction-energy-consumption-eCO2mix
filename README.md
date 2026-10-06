@@ -1,19 +1,22 @@
 # Day-ahead electricity load forecasting in France
 
+Daily pipeline that forecasts French national electricity consumption
+for the next day and benchmarks the result against RTE's own forecast.
+
 ## Problem
-The production of electricity must be balanced between supply and demand. TSO must know how much electricity will be needed to schedule the production. If the forecast is too low, the power plant must be started at short notice at high costs, and if the forecast is too high, the electricity is sold at a low cost or generation must be curtailed.
+Electricity cannot be stored at scale, so supply and demand must be balanced at every instant. RTE, the French transmission system operator (TSO), must know the day before how much electricity will be needed to schedule the production. If the forecast is too low, power plants must be started at short notice at high cost, and if the forecast is too high, the electricity is sold at a low price or generation must be curtailed.
 
 ## Target
-The consumption of electricity for the next day in MW in France, from 00:00 to 23:30 (GMT+2), every 30minutes, meaning 48 values per forecast
+French national electricity consumption, in MW, at 30-minute resolution, for calendar day D+1 from 00:00 to 23:30 (Europe/Paris local time), i.e. 48 values per forecast.
 
 ## Prediction time
 One forecast is produced every day at 12:00 (Europe/Paris local time)
 on day D, for day D+1.
 
 Information available at that time:
-- Consumption:  measure consumption up to apporximately 11:00 on day D
+- Consumption:  measure consumption up to apporximately 11:00 on day D plus the full history.
 - Weather: Weather forecast for day D+1.
-- Calendar: Day of the week and exact date of day D+1.
+- Calendar: weekday, public holidays and time of year of day D+1.
 
 Limitation: the time at which RTE produces its own day-ahead forecast
 is unknown, so the comparison is not guaranteed to be made with equal
@@ -27,13 +30,13 @@ information.
   in the physical unit, which is what an operator has to compensate.
 
 Both are computed over the 48 values of each forecast, then averaged
-over all days of the last year period.
+over all days of the test period.
 
 ## Baselines
 1. Seasonal naive: the consumption measured at the same half-hour
-   7 days before the target time. It needs no forecast and captures the
+   7 days before the target time. It needs no training and captures the
    weekly cycle of consumption. A 364-day variant will also be evaluated.
-2. TSO day-ahead forecast: the forecast published by TSO the day
+2. RTE day-ahead forecast: the forecast published by RTE the day
    before, available in the éCO2mix data (column `prevision_j1`). It is the
    reference of the industry.
 
@@ -42,11 +45,16 @@ to approach.
 
 ## Success criteria
 Evaluated on the test period (2025-09-01 to 2026-08-31), never used for training:
-- Minimum: MAPE at least lower than the seasonal naive baseline.
-- Ambition: MAPE no more than 2 times the MAPE of the TSO day-ahead
-  forecast.
+- Minimum: MAPE lower than the seasonal naive baseline.
+- Reported: the gap between the model's MAPE and that of the RTE
+  day-ahead forecast.
 The daily forecast runs without manual action, and a
 third party can reproduce the results from this repository.
+
+## Out of scope
+- Regional forecasts: only the national level is covered.
+- Other horizons: no intraday or week-ahead forecast.
+- Other quantities: no forecast of generation, prices or CO2 emissions.
 
 ## Data sources
 
