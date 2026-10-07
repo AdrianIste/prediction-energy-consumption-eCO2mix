@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down
+.PHONY: install lint format test check db-up db-down db-init db-down
 
 install:
 	uv sync
@@ -15,8 +15,14 @@ test:
 
 check: lint test
 
-db-up :
+db-up:
 	docker compose up -d
 
-db-down :
+db-down:
 	docker compose down
+
+db-init:
+	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/001_create_consumption.sql
+
+db-shell:
+	docker compose exec db psql -U load_forecast -d load_forecast
