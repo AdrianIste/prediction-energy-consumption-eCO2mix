@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-down
+.PHONY: install lint format test check db-up db-down db-init db-down download
 
 install:
 	uv sync
@@ -26,3 +26,6 @@ db-init:
 
 db-shell:
 	docker compose exec db psql -U load_forecast -d load_forecast
+
+download:
+	uv run python -m load_forecast.ingest.eco2mix
