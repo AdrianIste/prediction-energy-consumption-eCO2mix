@@ -3,6 +3,7 @@
 import datetime as dt
 from pathlib import Path
 
+import pandas as pd
 import requests
 
 BASE_URL = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets"
@@ -11,6 +12,8 @@ COLUMNS = ("date_heure", "consommation", "prevision_j1", "nature")
 TIMEOUT_SECONDS = 120
 FIRST_YEAR = 2012
 RAW_DIR = Path("data/raw/eco2mix")
+RENAMED_COLUMNS = {"consommation": "consumption_mw", "prevision_j1": "forecast_d1_mw"}
+TABLE_COLUMNS = ["ts", "consumption_mw", "forecast_d1_mw", "nature"]
 
 
 def build_export_params(year: int) -> dict[str, str]:
@@ -37,7 +40,6 @@ def download_year(year: int, dest_dir: Path) -> Path:
 
 def download_history(dest_dir: Path = RAW_DIR) -> list[Path]:
     """Download every year from FIRST_YEAR to the current year.
-
     A year is skipped when its file already exists, except the current and
     the previous year, whose values can still be revised by RTE.
     """
@@ -52,6 +54,18 @@ def download_history(dest_dir: Path = RAW_DIR) -> list[Path]:
         paths.append(download_year(year, dest_dir))
         print(f"{year}: downloaded")
     return paths
+
+
+def read_raw_csv(path: Path) -> pd.DataFrame:
+    """Read one raw éCO2mix file and return half-hourly rows shaped like the table."""
+    raw = pd.read_csv(path, sep=";", encoding="utf-8-sig")
+    raw["ts"] = pd.to_datetime(raw["date_heure"], utc=True)
+    half_hourly = raw[raw["ts"].dt.minute.isin([0, 30])]
+    renamed = half_hourly.rename(columns=RENAMED_COLUMNS)
+    result = renamed[TABLE_COLUMNS].copy()
+    result["consumption_mw"] = result["consumption_mw"].astype("Int64")
+    result["forecast_d1_mw"] = result["forecast_d1_mw"].astype("Int64")
+    return result
 
 
 if __name__ == "__main__":
