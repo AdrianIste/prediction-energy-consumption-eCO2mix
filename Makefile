@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-down download
+.PHONY: install lint format test check db-up db-down db-init db-down download load
 
 install:
 	uv sync
@@ -29,3 +29,5 @@ db-shell:
 
 download:
 	uv run python -m load_forecast.ingest.eco2mix
+load:
+	uv run python -m load_forecast.ingest.load_consumption
