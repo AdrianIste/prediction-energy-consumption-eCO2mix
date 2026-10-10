@@ -23,7 +23,7 @@ db-down:
 
 db-init:
 	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/001_create_consumption.sql
-
+	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/002_create_consumption_realtime.sql
 db-shell:
 	docker compose exec db psql -U load_forecast -d load_forecast
 
