@@ -8,6 +8,7 @@ import requests
 
 BASE_URL = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets"
 HISTORY_DATASET = "eco2mix-national-cons-def"
+REALTIME_DATASET = "eco2mix-national-tr"
 COLUMNS = ("date_heure", "consommation", "prevision_j1", "nature")
 TIMEOUT_SECONDS = 120
 FIRST_YEAR = 2012
@@ -24,6 +25,23 @@ def build_export_params(year: int) -> dict[str, str]:
         "timezone": "UTC",
         "where": f"date_heure >= date'{year}-01-01' and date_heure < date'{year + 1}-01-01'",
     }
+
+
+def download_realtime(dest_dir: Path = RAW_DIR) -> Path:
+    """Download the whole real-time dataset as one CSV file and return its path."""
+    url = f"{BASE_URL}/{REALTIME_DATASET}/exports/csv"
+    params = {
+        "select": ",".join(COLUMNS),
+        "order_by": "date_heure",
+        "timezone": "UTC",
+    }
+    response = requests.get(url, params=params, timeout=TIMEOUT_SECONDS)
+    response.raise_for_status()
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / "eco2mix_current.csv"
+    dest.write_bytes(response.content)
+    print("current : downloaded")
+    return dest
 
 
 def download_year(year: int, dest_dir: Path) -> Path:
@@ -70,3 +88,4 @@ def read_raw_csv(path: Path) -> pd.DataFrame:
 
 if __name__ == "__main__":
     download_history()
+    download_realtime()

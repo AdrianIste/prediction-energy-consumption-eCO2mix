@@ -18,6 +18,17 @@ UPSERT_SQL = """
         loaded_at = now()
 """
 
+ARCHIVE_SQL = """
+    INSERT INTO consumption_realtime (ts, consumption_mw, forecast_d1_mw)
+    SELECT ts, consumption_mw, forecast_d1_mw
+    FROM consumption
+    WHERE nature = 'Données temps réel'
+    ON CONFLICT (ts) DO UPDATE SET
+        consumption_mw = EXCLUDED.consumption_mw,
+        forecast_d1_mw = EXCLUDED.forecast_d1_mw,
+        archived_at = now()
+"""
+
 
 def to_rows(frame: pd.DataFrame) -> list[tuple]:
     """Turn a DataFrame into a list of tuples, with None for missing values."""
@@ -35,6 +46,13 @@ def load_file(conn: psycopg.Connection, path: Path) -> int:
     return len(rows)
 
 
+def archive_realtime(conn: psycopg.Connection) -> int:
+    """Copy the real-time rows of consumption into the archive table."""
+    with conn.cursor() as cursor:
+        cursor.execute(ARCHIVE_SQL)
+        return cursor.rowcount
+
+
 def load_history(raw_dir: Path = RAW_DIR) -> int:
     """Upsert every raw file of the directory and return the total row count."""
     total = 0
@@ -43,7 +61,9 @@ def load_history(raw_dir: Path = RAW_DIR) -> int:
             count = load_file(conn, path)
             print(f"{path.name}: {count} rows")
             total += count
+        archived = archive_realtime(conn)
     print(f"Total: {total} rows")
+    print(f"Archived real-time rows: {archived}")
     return total
 
 
