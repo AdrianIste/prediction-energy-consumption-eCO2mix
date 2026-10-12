@@ -24,10 +24,14 @@ db-down:
 db-init:
 	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/001_create_consumption.sql
 	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/002_create_consumption_realtime.sql
+	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/003_create_weather.sql
 db-shell:
 	docker compose exec db psql -U load_forecast -d load_forecast
 
 download:
 	uv run python -m load_forecast.ingest.eco2mix
+	uv run python -m load_forecast.ingest.open_meteo
+
 load:
 	uv run python -m load_forecast.ingest.load_consumption
+	uv run python -m load_forecast.ingest.load_weather
