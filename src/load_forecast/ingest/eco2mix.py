@@ -1,11 +1,15 @@
 """Download éCO2mix consumption data from the ODRÉ open data portal."""
 
 import datetime as dt
+import logging
 from pathlib import Path
 
 import pandas as pd
 import requests
 
+from load_forecast.logging_setup import setup_logging
+
+logger = logging.getLogger(__name__)
 BASE_URL = "https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets"
 HISTORY_DATASET = "eco2mix-national-cons-def"
 REALTIME_DATASET = "eco2mix-national-tr"
@@ -40,7 +44,7 @@ def download_realtime(dest_dir: Path = RAW_DIR) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / "eco2mix_current.csv"
     dest.write_bytes(response.content)
-    print("current : downloaded")
+    logger.info("current : downloaded")
     return dest
 
 
@@ -66,11 +70,11 @@ def download_history(dest_dir: Path = RAW_DIR) -> list[Path]:
     for year in range(FIRST_YEAR, current_year + 1):
         dest = dest_dir / f"eco2mix_{year}.csv"
         if dest.exists() and year < current_year - 1:
-            print(f"{year}: already downloaded, skipped")
+            logger.info(f"{year}: already downloaded, skipped")
             paths.append(dest)
             continue
         paths.append(download_year(year, dest_dir))
-        print(f"{year}: downloaded")
+        logger.info(f"{year}: downloaded")
     return paths
 
 
@@ -87,5 +91,6 @@ def read_raw_csv(path: Path) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
+    setup_logging()
     download_history()
     download_realtime()

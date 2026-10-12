@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-down download load
+.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest
 
 install:
 	uv sync
@@ -16,7 +16,7 @@ test:
 check: lint test
 
 db-up:
-	docker compose up -d
+	docker compose up -d --wait
 
 db-down:
 	docker compose down
@@ -35,3 +35,4 @@ download:
 load:
 	uv run python -m load_forecast.ingest.load_consumption
 	uv run python -m load_forecast.ingest.load_weather
+ingest: db-up db-init download load

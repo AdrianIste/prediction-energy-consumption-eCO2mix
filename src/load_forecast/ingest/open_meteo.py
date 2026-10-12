@@ -2,12 +2,16 @@
 
 import datetime as dt
 import json
+import logging
 import time
 from pathlib import Path
 
 import pandas as pd
 import requests
 
+from load_forecast.logging_setup import setup_logging
+
+logger = logging.getLogger(__name__)
 ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 RAW_DIR = Path("data/raw/open_meteo")
 TIMEOUT_SECONDS = 120
@@ -70,9 +74,10 @@ def download_all(dest_dir: Path = RAW_DIR) -> None:
             if dest.exists() and year < current_year:
                 continue
             download_city_year(city, year, dest_dir)
-            print(f"{city} {year}: downloaded")
+            logger.info(f"{city} {year}: downloaded")
             time.sleep(PAUSE_SECONDS)
 
 
 if __name__ == "__main__":
+    setup_logging()
     download_all()
