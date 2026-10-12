@@ -1,5 +1,6 @@
 """Load raw éCO2mix files into the consumption table."""
 
+import logging
 from pathlib import Path
 
 import pandas as pd
@@ -7,7 +8,9 @@ import psycopg
 
 from load_forecast.db import connect
 from load_forecast.ingest.eco2mix import RAW_DIR, read_raw_csv
+from load_forecast.logging_setup import setup_logging
 
+logger = logging.getLogger(__name__)
 UPSERT_SQL = """
     INSERT INTO consumption (ts, consumption_mw, forecast_d1_mw, nature)
     VALUES (%s, %s, %s, %s)
@@ -59,13 +62,14 @@ def load_history(raw_dir: Path = RAW_DIR) -> int:
     with connect() as conn:
         for path in sorted(raw_dir.glob("eco2mix_*.csv")):
             count = load_file(conn, path)
-            print(f"{path.name}: {count} rows")
+            logger.info(f"{path.name}: {count} rows")
             total += count
         archived = archive_realtime(conn)
-    print(f"Total: {total} rows")
-    print(f"Archived real-time rows: {archived}")
+    logger.info(f"Total: {total} rows")
+    logger.info(f"Archived real-time rows: {archived}")
     return total
 
 
 if __name__ == "__main__":
+    setup_logging()
     load_history()
