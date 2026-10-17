@@ -65,3 +65,8 @@ third party can reproduce the results from this repository.
 | [Open-Meteo](https://open-meteo.com/) | Hourly weather forecasts and historical weather | CC BY 4.0 |
 
 Details in [data source notes](docs/data_sources.md).
+
+## Data exploration
+
+The exploration notebooks and the decisions they lead to are summarised
+in [data exploration](docs/data_exploration.md).
