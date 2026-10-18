@@ -70,3 +70,15 @@ Details in [data source notes](docs/data_sources.md).
 
 The exploration notebooks and the decisions they lead to are summarised
 in [data exploration](docs/data_exploration.md).
+
+
+## Baseline
+
+Measured on the validation period (1 September 2024 to 31 August 2025),
+[notebooks/05_baselines.ipynb](notebooks/05_baselines.ipynb) :
+
+| Baseline | MAE (MW) | MAPE (%) |
+| --- | --- | --- |
+| Seasonal naive, 7 days | 3378 | 6.35 |
+| Seasonal naive, 364 days | 3615 | 6.68 |
+| RTE day-ahead forecast | 1309 | 2.63 |
