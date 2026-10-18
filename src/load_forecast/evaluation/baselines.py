@@ -18,3 +18,9 @@ def seasonal_naive(consumption: pd.Series, slots: pd.DatetimeIndex, days: int = 
     )
     values = consumption.reindex(lagged).to_numpy()
     return pd.Series(values, index=slots, name="forecast_mw")
+
+
+def rte_day_ahead(rte_forecast: pd.Series, slots: pd.DatetimeIndex) -> pd.Series:
+    """Return the RTE day-ahead forecast for each half-hour."""
+    values = rte_forecast.reindex(slots).to_numpy()
+    return pd.Series(values, index=slots, name="forecast_mw")
