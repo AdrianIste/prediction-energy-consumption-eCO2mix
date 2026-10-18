@@ -3,7 +3,7 @@ import datetime as dt
 import pandas as pd
 import pytest
 
-from load_forecast.evaluation.baselines import seasonal_naive
+from load_forecast.evaluation.baselines import rte_day_ahead, seasonal_naive
 from load_forecast.evaluation.protocol import half_hours
 
 
@@ -43,3 +43,12 @@ def test_lag_shorter_than_two_days_is_refused():
     consumption = make_series("2025-01-01", "2025-01-20")
     with pytest.raises(ValueError):
         seasonal_naive(consumption, half_hours(dt.date(2025, 1, 15)), days=1)
+
+
+def test_rte_forecast_is_read_for_each_half_hour():
+    rte = make_series("2025-01-01", "2025-01-20")
+    slots = half_hours(dt.date(2025, 1, 15))
+
+    forecast = rte_day_ahead(rte, slots)
+
+    assert (forecast.to_numpy() == rte.loc[slots].to_numpy()).all()
