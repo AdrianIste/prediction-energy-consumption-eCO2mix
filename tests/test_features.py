@@ -13,16 +13,13 @@ def flat_temperature(day: dt.date, value: float) -> pd.Series:
     return pd.Series(value, index=index)
 
 
-def test_one_hot_columns_mark_the_half_hour_and_the_weekday():
+def test_calendar_columns_give_the_half_hour_and_the_weekday():
     day = dt.date(2025, 1, 15)
     features = build_features(half_hours(day), flat_temperature(day, 10.0))
 
-    slot_columns = [f"slot_{i}" for i in range(48)]
-
-    assert features.shape == (48, 58)
-    assert (features[slot_columns].sum(axis=1) == 1).all()
-    assert features["slot_0"].iloc[0] == 1
-    assert (features["weekday_2"] == 1).all()
+    assert features.shape == (48, 4)
+    assert features["slot_of_day"].tolist() == list(range(48))
+    assert (features["weekday"] == 2).all()
 
 
 def test_public_holiday_is_flagged():
@@ -46,4 +43,3 @@ def test_temperature_is_interpolated_and_heating_degrees_computed():
     features = build_features(slots, temperature)
 
     assert features["temperature_c"].tolist() == [10.0, 11.0, 12.0, 16.0, 20.0]
-    assert features["heating_degrees"].tolist() == [6.0, 5.0, 4.0, 0.0, 0.0]
