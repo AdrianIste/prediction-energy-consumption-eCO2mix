@@ -11,3 +11,17 @@ def load_actuals() -> pd.DataFrame:
     actuals["ts"] = pd.to_datetime(actuals["ts"], utc=True)
     actuals = actuals.set_index("ts")
     return actuals.astype(float)
+
+
+def load_temperature() -> pd.Series:
+    """Return the hourly national temperature: the mean of the ten cities."""
+    temperature = read_sql(
+        """
+        SELECT ts, avg(temperature_c) AS temperature_c
+        FROM weather
+        GROUP BY ts
+        ORDER BY ts
+        """
+    )
+    temperature["ts"] = pd.to_datetime(temperature["ts"], utc=True)
+    return temperature.set_index("ts")["temperature_c"].astype(float)
