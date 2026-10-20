@@ -14,7 +14,7 @@ def build_training_data(
 
     last_train_slot = half_hours(end_day)[-1]
     y_train = actuals["consumption_mw"].loc[:last_train_slot].dropna()
-    X_train = build_features(y_train.index, temperature)
+    X_train = build_features(y_train.index, temperature, y_train)
     has_temperature = X_train["temperature_c"].notna()
     X_train = X_train[has_temperature]
     y_train = y_train[has_temperature]
@@ -28,11 +28,14 @@ def train_model(X: pd.DataFrame, y: pd.Series) -> XGBRegressor:
     return model
 
 
-def make_forecast_fn(model: XGBRegressor, temperature: pd.Series):
+def make_forecast_fn(model: XGBRegressor, temperature: pd.Series, consumption: pd.Series):
     """Return a function that forecasts the given half-hours with the model."""
 
     def forecast(slots: pd.DatetimeIndex) -> pd.Series:
-        features = build_features(slots, temperature)
+        features = build_features(slots, temperature, consumption)
+        features = features[
+            model.feature_names_in_
+        ]  # to keep the features the model has trained on
         values = model.predict(features)
         return pd.Series(values, index=slots, name="forecast_mw")
 

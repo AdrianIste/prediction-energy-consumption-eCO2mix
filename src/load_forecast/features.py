@@ -3,10 +3,13 @@
 import holidays
 import pandas as pd
 
+from load_forecast.evaluation.baselines import seasonal_naive
 from load_forecast.evaluation.protocol import PARIS_TZ
 
 
-def build_features(slots: pd.DatetimeIndex, temperature: pd.Series) -> pd.DataFrame:
+def build_features(
+    slots: pd.DatetimeIndex, temperature: pd.Series, consumption: pd.Series
+) -> pd.DataFrame:
     """Return one row per half-hour with calendar and temperature features."""
     paris = slots.tz_convert(PARIS_TZ)
     slot_of_day = paris.hour * 2 + paris.minute // 30
@@ -18,4 +21,7 @@ def build_features(slots: pd.DatetimeIndex, temperature: pd.Series) -> pd.DataFr
     features["is_holiday"] = pd.Index(paris.date).isin(list(fr_holidays)).astype(int)
     half_hourly = temperature.resample("30min").interpolate()
     features["temperature_c"] = half_hourly.reindex(slots).to_numpy()
+    features["lag_2d"] = seasonal_naive(consumption, slots, 2).reindex(slots).to_numpy()
+    features["lag_7d"] = seasonal_naive(consumption, slots, 7).reindex(slots).to_numpy()
+
     return features
