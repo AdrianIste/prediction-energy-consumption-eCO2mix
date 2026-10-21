@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi>=0.156.7",
     "holidays>=0.106",
     "matplotlib>=3.11.2",
     "pandas>=3.0.6",
@@ -15,6 +16,7 @@ dependencies = [
     "python-dotenv>=1.2.4",
     "requests>=2.34.2",
     "scikit-learn>=1.9.1",
+    "uvicorn>=0.54.0",
     "xgboost>=3.4.1",
 ]
 
@@ -27,6 +29,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "httpx2>=2.16.0",
     "ipykernel>=7.4.0",
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
