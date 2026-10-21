@@ -107,6 +107,7 @@ made 48 hours ahead. Limitations are listed in the notebook.
 | `make predict DAY=2026-01-15` | Loads the saved model and forecasts the given day |
 | `make api` | Runs the API locally, for development, on http://localhost:8000 |
 | `make up` | Builds the API image and starts the API and the database with Docker Compose |
+| `make daily` | Updates the recent consumption, fetches today's weather forecast, forecasts tomorrow and stores the forecast |
 The model is not versioned: `make train` rebuilds it, identically, from
 the data.
 
@@ -119,3 +120,13 @@ the data.
 
 Interactive documentation is available at http://localhost:8000/docs.
 The API reads the model from `models/`: run `make train` first.
+
+## Daily automation
+
+Every morning at 9:00, cron runs `make daily`:
+
+1. Recent consumption from RTE is downloaded and loaded.
+2. Today's temperature forecast for the ten cities is fetched from the
+   Open-Meteo forecast API (table `weather_forecast_daily`).
+3. Tomorrow's 48 half-hours are forecast with the saved model and stored
+   in the `forecasts` table, with the issue day and the model version.

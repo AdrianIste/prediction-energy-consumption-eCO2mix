@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict api up
+.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict api up daily
 
 install:
 	uv sync
@@ -25,6 +25,9 @@ db-init:
 	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/002_create_consumption_realtime.sql
 	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/003_create_weather.sql
 	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/004_create_weather_forecast.sql
+	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/005_create_weather_forecast_daily.sql
+	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/006_create_forecasts.sql
+	docker compose exec -T db psql -U load_forecast -d load_forecast < sql/007_create_forecast_errors.sql
 
 db-shell:
 	docker compose exec db psql -U load_forecast -d load_forecast
@@ -49,3 +52,8 @@ api:
 	uv run uvicorn load_forecast.api:app --reload
 up:
 	docker compose up --build
+daily: db-up
+	uv run python -m load_forecast.ingest.eco2mix
+	uv run python -m load_forecast.ingest.load_consumption
+	uv run python -m load_forecast.ingest.open_meteo_daily
+	uv run python -m load_forecast.daily
