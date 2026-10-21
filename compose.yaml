@@ -27,5 +27,27 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  dashboard:
+    build: .
+    command:
+      - uv
+      - run
+      - --no-sync
+      - streamlit
+      - run
+      - src/load_forecast/dashboard.py
+      - --server.address=0.0.0.0
+      - --server.port=8501
+      - --server.headless=true
+      - --browser.gatherUsageStats=false
+    ports:
+      - "8501:8501"
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
   pgdata:
