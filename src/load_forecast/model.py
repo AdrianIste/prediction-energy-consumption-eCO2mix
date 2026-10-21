@@ -6,6 +6,11 @@ from xgboost import XGBRegressor
 from load_forecast.evaluation.protocol import half_hours
 from load_forecast.features import build_features
 
+TRAIN_START = "2021-01-01"
+N_ESTIMATORS = 600
+MAX_DEPTH = 4
+LEARNING_RATE = 0.1
+
 
 def build_training_data(
     actuals: pd.DataFrame, temperature: pd.Series, end_day: dt.date
@@ -21,9 +26,17 @@ def build_training_data(
     return X_train, y_train
 
 
-def train_model(X: pd.DataFrame, y: pd.Series) -> XGBRegressor:
+def train_model(
+    X: pd.DataFrame,
+    y: pd.Series,
+    n_estimators: int = 100,
+    max_depth: int = 6,
+    learning_rate: int = 0.3,
+) -> XGBRegressor:
     """Train a gradient boosting model on the features and the consumption."""
-    model = XGBRegressor(random_state=0)
+    model = XGBRegressor(
+        random_state=0, n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate
+    )
     model.fit(X, y)
     return model
 

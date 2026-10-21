@@ -82,3 +82,18 @@ Measured on the validation period (1 September 2024 to 31 August 2025),
 | Seasonal naive, 7 days | 3378 | 6.35 |
 | Seasonal naive, 364 days | 3615 | 6.68 |
 | RTE day-ahead forecast | 1309 | 2.63 |
+
+### Final results
+
+Measured once on the test period (1 September 2025 to 31 August 2026),
+see [notebooks/07_final_model.ipynb](notebooks/07_final_model.ipynb):
+
+| Method | MAE (MW) | MAPE (%) |
+| --- | --- | --- |
+| Seasonal naive, 7 days | 3,445 | 6.42 |
+| **XGBoost model** | **1,247** | **2.41** |
+| RTE day-ahead forecast | 1,388 | 2.74 |
+
+The model uses only information available at noon the day before:
+calendar, consumption 2 and 7 days earlier, and the temperature forecast
+made 48 hours ahead. Limitations are listed in the notebook.
