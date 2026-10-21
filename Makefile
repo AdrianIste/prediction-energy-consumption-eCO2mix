@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict api up daily
+.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict api up daily dashboard
 
 install:
 	uv sync
@@ -57,3 +57,5 @@ daily: db-up
 	uv run python -m load_forecast.ingest.load_consumption
 	uv run python -m load_forecast.ingest.open_meteo_daily
 	uv run python -m load_forecast.daily
+dashboard:
+	uv run streamlit run src/load_forecast/dashboard.py

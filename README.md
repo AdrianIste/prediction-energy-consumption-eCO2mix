@@ -130,3 +130,15 @@ Every morning at 9:00, cron runs `make daily`:
    Open-Meteo forecast API (table `weather_forecast_daily`).
 3. Tomorrow's 48 half-hours are forecast with the saved model and stored
    in the `forecasts` table, with the issue day and the model version.
+
+## Monitoring
+
+A Streamlit dashboard shows the latest forecast, forecast against actual
+consumption over the last 14 days, and the daily MAPE of the model and of
+RTE.
+
+![Monitoring dashboard](docs/dashboard.png)
+
+Forecasts from 1 September to 20 October 2026 were reconstructed with the
+saved model and archived weather forecasts made 48 hours ahead; daily
+forecasts run from 21 October 2026.

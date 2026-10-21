@@ -7,7 +7,8 @@ SELECT
     c.consumption_mw AS actual_mw,
     f.forecast_mw - c.consumption_mw AS error_mw,
     abs(f.forecast_mw - c.consumption_mw)::float / c.consumption_mw * 100 AS abs_pct_error,
-    (f.ts AT TIME ZONE 'Europe/Paris')::date AS target_day
+    (f.ts AT TIME ZONE 'Europe/Paris')::date AS target_day,
+    c.forecast_d1_mw AS rte_forecast_mw
 
 FROM forecasts AS f
 JOIN consumption AS c ON c.ts = f.ts
