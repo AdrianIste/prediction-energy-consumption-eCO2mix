@@ -97,3 +97,14 @@ see [notebooks/07_final_model.ipynb](notebooks/07_final_model.ipynb):
 The model uses only information available at noon the day before:
 calendar, consumption 2 and 7 days earlier, and the temperature forecast
 made 48 hours ahead. Limitations are listed in the notebook.
+
+## Usage
+
+| Command | What it does |
+| --- | --- |
+| `make ingest` | Starts the database, downloads and loads all data |
+| `make train` | Trains the final model and saves it to `models/`, with its metadata |
+| `make predict DAY=2026-01-15` | Loads the saved model and forecasts the given day |
+
+The model is not versioned: `make train` rebuilds it, identically, from
+the data.

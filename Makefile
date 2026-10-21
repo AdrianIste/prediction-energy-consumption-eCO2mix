@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest
+.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict
 
 install:
 	uv sync
@@ -41,3 +41,8 @@ load:
 	uv run python -m load_forecast.ingest.load_weather
 	uv run python -m load_forecast.ingest.load_weather_forecast
 ingest: db-up db-init download load
+
+train:
+	uv run python -m load_forecast.training
+predict:
+	uv run python -m load_forecast.predict --day $(DAY)

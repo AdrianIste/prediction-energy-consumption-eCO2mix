@@ -222,3 +222,5 @@ __marimo__/
 # Local data files are never versioned
 data/*
 !data/.gitkeep
+# Trained models are rebuilt with make train
+models/
