@@ -1,4 +1,4 @@
-.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict
+.PHONY: install lint format test check db-up db-down db-init db-shell download load ingest train predict api up
 
 install:
 	uv sync
@@ -16,8 +16,7 @@ test:
 check: lint test
 
 db-up:
-	docker compose up -d --wait
-
+	docker compose up -d --wait db
 db-down:
 	docker compose down
 
@@ -46,3 +45,7 @@ train:
 	uv run python -m load_forecast.training
 predict:
 	uv run python -m load_forecast.predict --day $(DAY)
+api:
+	uv run uvicorn load_forecast.api:app --reload
+up:
+	docker compose up --build

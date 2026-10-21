@@ -11,7 +11,7 @@ def connect() -> psycopg.Connection:
     """Open a connection using the variables defined in .env."""
     load_dotenv()
     return psycopg.connect(
-        host="localhost",
+        host=os.environ.get("POSTGRES_HOST", "localhost"),
         port=os.environ["POSTGRES_PORT"],
         dbname=os.environ["POSTGRES_DB"],
         user=os.environ["POSTGRES_USER"],

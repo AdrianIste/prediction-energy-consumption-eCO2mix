@@ -105,6 +105,17 @@ made 48 hours ahead. Limitations are listed in the notebook.
 | `make ingest` | Starts the database, downloads and loads all data |
 | `make train` | Trains the final model and saves it to `models/`, with its metadata |
 | `make predict DAY=2026-01-15` | Loads the saved model and forecasts the given day |
-
+| `make api` | Runs the API locally, for development, on http://localhost:8000 |
+| `make up` | Builds the API image and starts the API and the database with Docker Compose |
 The model is not versioned: `make train` rebuilds it, identically, from
 the data.
+
+### API
+
+| Route | What it returns |
+| --- | --- |
+| `GET /health` | `{"status": "ok"}` when the API is running |
+| `GET /forecast?day=2026-01-15` | The 48 half-hourly forecasts of the given Paris day |
+
+Interactive documentation is available at http://localhost:8000/docs.
+The API reads the model from `models/`: run `make train` first.
